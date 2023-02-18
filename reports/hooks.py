@@ -7,8 +7,16 @@ app_description = "All Custom Report"
 app_email = "dineshpanchal432@gmail.com"
 app_license = "MIT"
 
-# Includes in <head>
+# Includes in <head>/home/kishan/frappe-bench/apps/reports/overrides/custom_payment_reconciliation.py
 # ------------------
+override_doctype_class = {
+    "Payment Reconciliation": "reports.overrides.custom_payment_reconciliation.CustomPaymentReconciliation"
+}
+
+override_whitelisted_methods = {
+    "erpnext.accounts.doctype.payment_entry.payment_entry.get_outstanding_reference_documents":
+        "reports.overrides.get_outstanding_reference_documents.get_outstanding_reference_documents",
+}
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/reports/css/reports.css"
@@ -108,6 +116,11 @@ app_license = "MIT"
 #		"on_cancel": "method",
 #		"on_trash": "method"
 #	}
+# }
+# doc_events = {
+#     "Payment Reconciliation": {
+#         "before_insert": "reports.reports.custom_payment_reconciliation.CustomPaymentReconciliation"
+#     }
 # }
 
 # Scheduled Tasks
