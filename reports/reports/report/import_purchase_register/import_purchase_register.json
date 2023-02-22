@@ -1,97 +1,6 @@
 {
  "add_total_row": 1,
- "columns": [
-  {
-   "fieldname": "posting_date",
-   "fieldtype": "Date",
-   "label": "Invoice Date",
-   "width": 0
-  },
-  {
-   "fieldname": "name",
-   "fieldtype": "Data",
-   "label": "Invoice No",
-   "width": 0
-  },
-  {
-   "fieldname": "supplier",
-   "fieldtype": "Data",
-   "label": "Supplier Code",
-   "width": 0
-  },
-  {
-   "fieldname": "supplier_name",
-   "fieldtype": "Data",
-   "label": "Supplier Name",
-   "width": 0
-  },
-  {
-   "fieldname": "bill_of_entry_no",
-   "fieldtype": "Data",
-   "label": "BOE No",
-   "width": 0
-  },
-  {
-   "fieldname": "bill_of_entry_date",
-   "fieldtype": "Date",
-   "label": "BOE Date",
-   "width": 0
-  },
-  {
-   "fieldname": "bill_no",
-   "fieldtype": "Data",
-   "label": "Supplier Invoice",
-   "width": 0
-  },
-  {
-   "fieldname": "bill_date",
-   "fieldtype": "Date",
-   "label": "Supplier Invoice Date",
-   "width": 0
-  },
-  {
-   "fieldname": "awb_bl_no",
-   "fieldtype": "Data",
-   "label": "Air Way Bill No",
-   "width": 0
-  },
-  {
-   "fieldname": "assy_value",
-   "fieldtype": "Data",
-   "label": "Assy Value",
-   "width": 0
-  },
-  {
-   "fieldname": "port_code",
-   "fieldtype": "Data",
-   "label": "Port Code",
-   "width": 0
-  },
-  {
-   "fieldname": "currency",
-   "fieldtype": "Data",
-   "label": "Currency",
-   "width": 0
-  },
-  {
-   "fieldname": "conversion_rate",
-   "fieldtype": "Data",
-   "label": "Exchange Rate",
-   "width": 0
-  },
-  {
-   "fieldname": "total",
-   "fieldtype": "Data",
-   "label": "Total USD",
-   "width": 0
-  },
-  {
-   "fieldname": "base_total",
-   "fieldtype": "Data",
-   "label": "Total INR",
-   "width": 0
-  }
- ],
+ "columns": [],
  "creation": "2023-01-27 10:42:21.610364",
  "disable_prepared_report": 1,
  "disabled": 0,
@@ -101,9 +10,9 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "Blisstering Electronics Private Limited",
- "modified": "2023-02-21 15:38:59.081094",
+ "modified": "2023-02-22 10:29:58.227231",
  "modified_by": "Administrator",
- "module": "Custom Reports",
+ "module": "Reports",
  "name": "Import Purchase Register",
  "owner": "Administrator",
  "prepared_report": 0,
