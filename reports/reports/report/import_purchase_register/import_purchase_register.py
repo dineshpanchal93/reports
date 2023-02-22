@@ -82,7 +82,7 @@ def execute(filters=None):
         if(total_taxes_and_charges):            
             row.append(total_taxes_and_charges[0][0])
         else:
-            row.append([0])
+            row.append(0)
 
         for expense_account in total_taxes_and_charges:
         	if((expense_account[1] + ":Currency:150") not in columns):
