@@ -28,7 +28,7 @@ frappe.query_reports["Sales Order Analysis BEPL"] = {
 			"fieldtype": "Date",
 			"width": "80",
 			"reqd": 1,
-			"default": frappe.datetime.get_today()
+			"default": frappe.datetime.month_end()
 		},
 		{
 			"fieldname": "sales_order",
