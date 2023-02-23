@@ -54,23 +54,18 @@ def execute(filters=None):
             pr.name
         from 
             `tabPurchase Invoice` pi,
-            `tabPurchase Invoice Item` pii,
             `tabPurchase Receipt` pr 
         where 
             pi.posting_date>=%(from_date)s and pi.posting_date<=%(to_date)s
             and pi.docstatus = 1
             and pr.docstatus = 1
-            and pii.parent = pi.name 
-            and pr.name = pii.purchase_receipt
+            and pr.name = (select purchase_receipt FROM `tabPurchase Invoice Item` xy where xy.parent = pi.name limit 1)
             and pi.supplier in (select name from `tabSupplier` where supplier_group = 'Import Purchase')
             {supplier_condition}
         order by
             pi.posting_date desc
     """.format(supplier_condition=(supplier_condition) if supplier_condition else ""), {"from_date": from_date, "to_date": to_date, "supplier":supplier} ,as_list=1)
 
-    import itertools
-    data.sort(reverse=True)
-    data = list(data for data,_ in itertools.groupby(data))
 
     for row in data:
         total_taxes_and_charges = frappe.db.sql("""
