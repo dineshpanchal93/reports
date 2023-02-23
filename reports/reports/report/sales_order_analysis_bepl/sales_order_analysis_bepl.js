@@ -13,13 +13,14 @@ frappe.query_reports["Sales Order Analysis BEPL"] = {
 			"reqd": 1,
 			"default": frappe.defaults.get_default("company")
 		},
+		// default from date should be current months first day
 		{
 			"fieldname":"from_date",
 			"label": __("From Date"),
 			"fieldtype": "Date",
 			"width": "80",
 			"reqd": 1,
-			"default": frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			"default": frappe.datetime.month_start()
 		},
 		{
 			"fieldname":"to_date",
