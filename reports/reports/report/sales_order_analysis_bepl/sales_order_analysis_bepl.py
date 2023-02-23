@@ -169,6 +169,9 @@ def prepare_data(data, so_elapsed_time, filters):
 	if filters.get("group_by_so"):
 		sales_order_map = {}
 
+	if filters.get("group_by_item_group"):
+		item_group_map = {}
+
 	for row in data:
 		# sum data for chart
 		completed += row["billed_amount"]
@@ -213,6 +216,34 @@ def prepare_data(data, so_elapsed_time, filters):
 				for field in fields:
 					so_row[field] = flt(row[field]) + flt(so_row[field])
 
+		if filters.get("group_by_item_group"):
+			item_group = row["item_group"]
+
+			if not item_group in item_group_map:
+				# create an entry
+				row_copy = copy.deepcopy(row)
+				item_group_map[item_group] = row_copy
+			else:
+				# update existing entry
+				ig_row = item_group_map[item_group]
+				ig_row["required_date"] = max(getdate(ig_row["delivery_date"]), getdate(row["delivery_date"]))
+				ig_row["delay"] = min(ig_row["delay"], row["delay"])
+
+				# sum numeric columns
+				fields = [
+					"qty",
+					"delivered_qty",
+					"pending_qty",
+					"billed_qty",
+					"qty_to_bill",
+					"amount",
+					"delivered_qty_amount",
+					"billed_amount",
+					"pending_amount",
+				]
+				for field in fields:
+					ig_row[field] = flt(row[field]) + flt(ig_row[field])
+
 	chart_data = prepare_chart_data(pending, completed)
 
 	if filters.get("group_by_so"):
@@ -220,11 +251,15 @@ def prepare_data(data, so_elapsed_time, filters):
 		for so in sales_order_map:
 			data.append(sales_order_map[so])
 		return data, chart_data
+	
+	if filters.get("group_by_item_group"):
+		data = []
+		for ig in item_group_map:
+			data.append(item_group_map[ig])
+		return data, chart_data
 
 	return data, chart_data
 
-# # on group_by_item_group = 1
-# def prepare_data(data, so_elapsed_time, filters):
 
 
 
@@ -242,14 +277,6 @@ def get_columns(filters):
 	columns = [
 		{"label": _("Date"), "fieldname": "date", "fieldtype": "Date", "width": 90},
 		{
-			"label": _("Sales Order"),
-			"fieldname": "sales_order",
-			"fieldtype": "Link",
-			"options": "Sales Order",
-			"width": 160,
-		},
-		{"label": _("Status"), "fieldname": "status", "fieldtype": "Data", "width": 130},
-		{
 			"label": _("Customer"),
 			"fieldname": "customer",
 			"fieldtype": "Link",
@@ -261,33 +288,36 @@ def get_columns(filters):
 			"fieldname": "customer_name",
 			"fieldtype": "Data",
 			"width": 160,
+		},
+		{
+			"label": _("Item Group"),
+			"fieldname": "item_group",
+			"fieldtype": "Data",
+			"width": 100,
 		}
+	
 	]
+	if not filters.get("group_by_item_group"):
+		columns.append(
+			{
+				"label": _("Sales Order"),
+				"fieldname": "sales_order",
+				"fieldtype": "Link",
+				"options": "Sales Order",
+				"width": 100,
+			}
+		)
+		columns.append(
+			{"label": _("Status"), "fieldname": "status", "fieldtype": "Data", "width": 130}
+		)
 
-	# if  filters.get("group_by_so"):
-	# 	columns.append(
-	# 		{
-	# 			"label": _("% Delivered"),
-
-	# 		}
-	# 	)
-
-
-	if not filters.get("group_by_so"):
+	if (not filters.get("group_by_so")) and (not filters.get("group_by_item_group")):
 		columns.append(
 			{
 				"label": _("Item Code"),
 				"fieldname": "item_code",
 				"fieldtype": "Link",
 				"options": "Item",
-				"width": 100,
-			}
-		)
-		columns.append(
-			{
-				"label": _("Item Group"),
-				"fieldname": "item_group",
-				"fieldtype": "Data",
 				"width": 100,
 			}
 		)
