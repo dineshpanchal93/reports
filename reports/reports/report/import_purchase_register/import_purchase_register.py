@@ -151,6 +151,9 @@ def execute(filters=None):
                     row[index] =  account[1]
                 else:
                     row[index] =  account[2]
+
+    data = list(set(tuple(i) for i in data))
+
     return columns, data
 
 
