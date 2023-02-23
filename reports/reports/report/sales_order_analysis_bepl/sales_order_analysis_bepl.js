@@ -67,6 +67,12 @@ frappe.query_reports["Sales Order Analysis BEPL"] = {
 			"label": __("Group by Sales Order"),
 			"fieldtype": "Check",
 			"default": 0
+		},
+		{
+			"fieldname": "group_by_item_group",
+			"label": __("Group by Item Group"),
+			"fieldtype": "Check",
+			"default": 0
 		}
 	],
 

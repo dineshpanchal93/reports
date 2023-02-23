@@ -69,7 +69,7 @@ def get_balance_qty_from_sle(item_code, warehouse):
 
 # get qty_after_transaction from tabStock Ledger Entry for the given item_code and warehouse and join it with the query
 # where qty_after_transaction should be latest posting date and time
-
+# get item_group based on item_code from tabItem
 
 def get_data(conditions, filters):
 	# nosemgrep
@@ -80,10 +80,10 @@ def get_data(conditions, filters):
 			soi.delivery_date as delivery_date,
 			so.name as sales_order,
 			so.status, so.customer, so.customer_name, soi.item_code,
+			i.item_group as item_group,
 			sle.qty_after_transaction as balance_at_warehouse,
 			DATEDIFF(CURDATE(), soi.delivery_date) as delay_days,
 			IF(so.status in ('Completed','To Bill'), 0, (SELECT delay_days)) as delay,
-
 			soi.qty, soi.delivered_qty,
 			(soi.delivered_qty / soi.qty) * 100 as delivered_qty_percentage,
 			(soi.qty - soi.delivered_qty) AS pending_qty,
@@ -102,6 +102,8 @@ def get_data(conditions, filters):
 			ON sii.so_detail = soi.name and sii.docstatus = 1
 		LEFT JOIN `tabStock Ledger Entry` sle
 			ON sle.item_code = soi.item_code and sle.warehouse = soi.warehouse
+		LEFT JOIN `tabItem` i
+			ON i.name = soi.item_code
 		WHERE
 			soi.parent = so.name
 			and so.status not in ('Stopped', 'Closed', 'On Hold')
@@ -221,6 +223,10 @@ def prepare_data(data, so_elapsed_time, filters):
 
 	return data, chart_data
 
+# # on group_by_item_group = 1
+# def prepare_data(data, so_elapsed_time, filters):
+
+
 
 def prepare_chart_data(pending, completed):
 	labels = ["Amount to Bill", "Billed Amount"]
@@ -279,10 +285,19 @@ def get_columns(filters):
 		)
 		columns.append(
 			{
+				"label": _("Item Group"),
+				"fieldname": "item_group",
+				"fieldtype": "Data",
+				"width": 100,
+			}
+		)
+		columns.append(
+			{
 				"label": _("Bal at Warehouse"),
 				"fieldname": "balance_at_warehouse",
-				"fieldtype": "Data",
+				"fieldtype": "Float",
 				"width": 120,
+				"convertible": "qty",
 			}
 		)
 		columns.append(
