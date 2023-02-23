@@ -65,6 +65,10 @@ def execute(filters=None):
             pi.posting_date desc
     """.format(supplier_condition=(supplier_condition) if supplier_condition else ""), {"from_date": from_date, "to_date": to_date, "supplier":supplier} ,as_list=1)
 
+    import itertools
+    data.sort(reverse=True)
+    data = list(data for data,_ in itertools.groupby(data))
+
     for row in data:
         total_taxes_and_charges = frappe.db.sql("""
             select  
@@ -152,7 +156,6 @@ def execute(filters=None):
                 else:
                     row[index] =  account[2]
 
-    data = list(set(tuple(i) for i in data))
 
     return columns, data
 
