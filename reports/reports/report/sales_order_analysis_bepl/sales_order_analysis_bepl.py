@@ -68,7 +68,7 @@ def get_balance_qty_from_sle(item_code, warehouse):
 	return flt(balance_qty[0][0]) if balance_qty else 0.0
 
 # get qty_after_transaction from tabStock Ledger Entry for the given item_code and warehouse and join it with the query
-
+# where qty_after_transaction should be latest posting date and time
 
 
 def get_data(conditions, filters):
@@ -79,11 +79,13 @@ def get_data(conditions, filters):
 			so.transaction_date as date,
 			soi.delivery_date as delivery_date,
 			so.name as sales_order,
-			so.status, so.customer, soi.item_code,
+			so.status, so.customer, so.customer_name, soi.item_code,
 			sle.qty_after_transaction as balance_at_warehouse,
 			DATEDIFF(CURDATE(), soi.delivery_date) as delay_days,
 			IF(so.status in ('Completed','To Bill'), 0, (SELECT delay_days)) as delay,
+
 			soi.qty, soi.delivered_qty,
+			(soi.delivered_qty / soi.qty) * 100 as delivered_qty_percentage,
 			(soi.qty - soi.delivered_qty) AS pending_qty,
 			IFNULL(SUM(sii.qty), 0) as billed_qty,
 			soi.base_amount as amount,
@@ -104,6 +106,7 @@ def get_data(conditions, filters):
 			soi.parent = so.name
 			and so.status not in ('Stopped', 'Closed', 'On Hold')
 			and so.docstatus = 1
+			and sle.name = (select name from `tabStock Ledger Entry` where item_code = soi.item_code and warehouse = soi.warehouse order by posting_date desc, posting_time desc limit 1)
 			{conditions}
 		GROUP BY soi.name
 		ORDER BY so.transaction_date ASC, soi.item_code ASC
@@ -247,6 +250,12 @@ def get_columns(filters):
 			"options": "Customer",
 			"width": 130,
 		},
+		{
+			"label": _("Customer Name"),
+			"fieldname": "customer_name",
+			"fieldtype": "Data",
+			"width": 160,
+		}
 	]
 
 	# if  filters.get("group_by_so"):
@@ -270,7 +279,7 @@ def get_columns(filters):
 		)
 		columns.append(
 			{
-				"label": _("BAL at Warehouse"),
+				"label": _("Bal at Warehouse"),
 				"fieldname": "balance_at_warehouse",
 				"fieldtype": "Data",
 				"width": 120,
@@ -289,32 +298,39 @@ def get_columns(filters):
 				"width": 120,
 				"convertible": "qty",
 			},
-			# {
-			# 	"label": _("Delivered Qty"),
-			# 	"fieldname": "delivered_qty",
-			# 	"fieldtype": "Float",
-			# 	"width": 120,
-			# 	"convertible": "qty",
-			# },
-			# {
-			# 	"label": _("Qty to Deliver"),
-			# 	"fieldname": "pending_qty",
-			# 	"fieldtype": "Float",
-			# 	"width": 120,
-			# 	"convertible": "qty",
-			# },
 			{
-				"label": _("Billed Qty"),
-				"fieldname": "billed_qty",
+				"label": _("Delivered Qty"),
+				"fieldname": "delivered_qty",
 				"fieldtype": "Float",
-				"width": 80,
+				"width": 120,
 				"convertible": "qty",
 			},
 			{
-				"label": _("Qty to Bill"),
-				"fieldname": "qty_to_bill",
+				"label": _("Qty to Deliver"),
+				"fieldname": "pending_qty",
 				"fieldtype": "Float",
-				"width": 80,
+				"width": 120,
+				"convertible": "qty",
+			},
+			# {
+			# 	"label": _("Billed Qty"),
+			# 	"fieldname": "billed_qty",
+			# 	"fieldtype": "Float",
+			# 	"width": 80,
+			# 	"convertible": "qty",
+			# },
+			# {
+			# 	"label": _("Qty to Bill"),
+			# 	"fieldname": "qty_to_bill",
+			# 	"fieldtype": "Float",
+			# 	"width": 80,
+			# 	"convertible": "qty",
+			# },
+			{
+				"label":_("Delivered Qty %"),
+				"fieldname":"delivered_qty_percentage",
+				"fieldtype":"Percent",
+				"width": 110,
 				"convertible": "qty",
 			},
 			# {
