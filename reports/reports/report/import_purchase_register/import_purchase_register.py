@@ -108,7 +108,7 @@ def execute(filters=None):
     total_taxes_index = columns.index('Total Taxes and Charges:Currency:150')
 
     # Loop over each row in the data list
-    i = 0
+    # i = 0
     for row in data:
         # Add None values to the end of the row for any columns that come after 'Total Taxes and Charges'
         for i in range(total_taxes_index + 1, len(columns)):
