@@ -73,7 +73,7 @@ def get_data(filters):
             purchase_invoice.inward_gate_no,
             purchase_invoice.inward_gate_entry_date,
             landed_cost_taxes_and_charges.expense_account,
-            landed_cost_taxes_and_charges.amount 
+            landed_cost_taxes_and_charges.amount      
         )
         .where(bill_of_entry.docstatus == 1)
         .where(
@@ -94,15 +94,28 @@ def get_data(filters):
         .on(landed_cost_voucher.name == landed_cost_purchase_receipt.parent)
         .left_join(landed_cost_taxes_and_charges)
         .on(landed_cost_taxes_and_charges.parent == landed_cost_voucher.name)
+        .distinct()
         
     )
+    data = query.run(as_dict=1)
 
+    consolidated_data = {}
+    for row in data:
+        purchase_invoice = row["purchase_invoice"]
+        expense_account = row.pop("expense_account")
+        amount = row.pop("amount")
 
-    return query.run(as_dict=1)
+        if purchase_invoice not in consolidated_data:
+            consolidated_data[purchase_invoice] = row
+            consolidated_data[purchase_invoice][expense_account] = amount
+        else:
+            consolidated_data[purchase_invoice][expense_account] = amount
+
+    return list(consolidated_data.values())
 
 
 def get_columns():
-    return [
+    columns =  [
         {
             "fieldname": "supplier",
             "label": _("Supplier"),
@@ -114,7 +127,7 @@ def get_columns():
 			"fieldname": "supplier_name",
 			"label": _("Supplier Name"),
 			"fieldtype": "Data",
-			"width": 150,
+			"width": 250,
 		},
         {
             "fieldname": "name",
@@ -128,7 +141,7 @@ def get_columns():
             "label": _("Purchase Invoice"),
             "fieldtype": "Link",
             "options": "Purchase Invoice",
-            "width": 130,
+            "width": 160,
         },
         {
 			"fieldname": "posting_date",
@@ -190,37 +203,45 @@ def get_columns():
             "fieldname": "total_assessable_value",
             "label": _("Total Assessable Value"),
             "fieldtype": "Currency",
-            "width": 110,
+            "width": 140,
         },
         {
             "fieldname": "total_customs_duty",
             "label": _("Total Customs Duty"),
             "fieldtype": "Currency",
-            "width": 110,
+            "width": 140,
         },
         {
             "fieldname": "total_taxes",
             "label": _("Total Taxes"),
             "fieldtype": "Currency",
-            "width": 100,
+            "width": 140,
         },
         {
             "fieldname": "total_amount_payable",
             "label": _("Amount Payable"),
             "fieldtype": "Currency",
-            "width": 90,
+            "width": 140,
         },
         {
-            "fieldname": "expense_account",
-            "label": _("Expense Account"),
-            "fieldtype": "Link",
-            "options": "Account",
-            "width": 230,
-        },
-        {
-            "fieldname": "amount",
-            "label": _("Amount"),
+            "fieldname": "5151 - Custom Clearance Charges - BEPL",
+            "label": _("5151 - Custom Clearance Charges - BEPL"),
             "fieldtype": "Currency",
-            "width": 100,
+            "width": 250,
         },
+        {
+            "fieldname": "5152 - Import Freight Charges - BEPL",
+            "label": _("5152 - Import Freight Charges - BEPL"),
+            "fieldtype": "Currency",
+            "width": 250,
+        },
+        {
+            "fieldname": "5153 - Basic Custom Duty Expense - BEPL",
+            "label": _("5153 - Basic Custom Duty Expense - BEPL"),
+            "fieldtype": "Currency",
+            "width": 250,
+        },
+        
     ]
+
+    return columns
