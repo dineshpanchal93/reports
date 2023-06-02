@@ -72,6 +72,10 @@ def get_data(filters):
             purchase_invoice.bill_date,
             purchase_invoice.inward_gate_no,
             purchase_invoice.inward_gate_entry_date,
+            purchase_invoice.currency,
+            purchase_invoice.conversion_rate,
+            purchase_invoice.grand_total,
+            purchase_invoice.base_rounded_total,
             landed_cost_taxes_and_charges.expense_account,
             landed_cost_taxes_and_charges.amount      
         )
@@ -141,6 +145,31 @@ def get_columns():
             "label": _("Purchase Invoice"),
             "fieldtype": "Link",
             "options": "Purchase Invoice",
+            "width": 160,
+        },
+        {
+            "fieldname": "currency",
+            "label": _("Currency"),
+            "fieldtype": "Data",
+            "width": 50,
+        },
+        {
+            "fieldname": "conversion_rate",
+            "label": _("Conversion Rate"),
+            "fieldtype": "Float",
+            "width": 80,
+        },
+        {
+            "fieldname": "grand_total",
+            "label": _("Total in USD"),
+            "fieldtype": "Data",
+            "width": 120,
+            "options": "USD"
+        },
+        {
+            "fieldname": "base_rounded_total",
+            "label": _("Total in INR"),
+            "fieldtype": "Currency",
             "width": 160,
         },
         {
