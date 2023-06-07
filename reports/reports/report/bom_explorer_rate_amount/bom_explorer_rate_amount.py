@@ -27,22 +27,42 @@ def get_exploded_items(bom, data, indent=0, qty=1):
 	for item in exploded_items:
 		print(item.bom_no, indent)
 		item["indent"] = indent
-		data.append(
-			{
-				"item_code": item.item_code,
-				"item_name": item.item_name,
-				"indent": indent,
-				"bom_level": indent,
-				"bom": item.bom_no,
-				"qty": item.qty * qty,
-				"uom": item.uom,
-				"rate": item.rate,
-				"amount": item.amount,
-				"description": item.description,
-			}
-		)
-		if item.bom_no:
-			get_exploded_items(item.bom_no, data, indent=indent + 1, qty=item.qty)
+		if not item.bom_no:
+			data.append(
+				{
+					"item_code": item.item_code,
+					"item_name": item.item_name,
+					"indent": indent,
+					"bom_level": indent,
+					"bom": item.bom_no,
+					"qty": item.qty * qty,
+					"uom": item.uom,
+					"rate": item.rate,
+					"amount": item.amount,
+					"description": item.description,
+				}
+			)
+			if item.bom_no:
+				get_exploded_items(item.bom_no, data, indent=indent + 1, qty=item.qty)
+
+		else:
+			data.append(
+				{
+					"item_code": item.item_code,
+					"item_name": item.item_name,
+					"indent": indent,
+					"bom_level": indent,
+					"bom": item.bom_no,
+					"qty": item.qty * qty,
+					"uom": item.uom,
+					"rate": 0,
+					"amount": 0,
+					"description": item.description,
+				}
+			)
+			if item.bom_no:
+				get_exploded_items(item.bom_no, data, indent=indent + 1, qty=item.qty)
+
 
 
 def get_columns():
