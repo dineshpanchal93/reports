@@ -1,0 +1,45 @@
+{
+ "add_total_row": 1,
+ "columns": [],
+ "creation": "2023-06-07 11:57:30.326753",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "Blisstering Electronics Private Limited",
+ "modified": "2023-06-07 11:57:30.326753",
+ "modified_by": "Administrator",
+ "module": "Reports",
+ "name": "BOM Explorer Rate-Amount",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "BOM",
+ "report_name": "BOM Explorer Rate-Amount",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Manufacturing User"
+  },
+  {
+   "role": "Manufacturing Manager"
+  },
+  {
+   "role": "PPC Manager"
+  },
+  {
+   "role": "Maintenance User"
+  },
+  {
+   "role": "Production Manager SMT"
+  },
+  {
+   "role": "All"
+  },
+  {
+   "role": "Quality Manager"
+  }
+ ]
+}
