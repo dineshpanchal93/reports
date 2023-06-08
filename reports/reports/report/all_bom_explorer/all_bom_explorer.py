@@ -41,13 +41,15 @@ def get_exploded_items(data, bom, indent=0, qty=1):
         item["indent"] = indent
         if index == 1 and indent == 0:
             parent_bom = bom
+            item_code = f"<b>{parent_bom}</b>"
         else:
             parent_bom = ""
+            item_code = item.item_code
         if not item.bom_no:
             data.append(
                 {
                     "parent_bom": f"<b>{parent_bom}</b>",
-                    "item_code": item.item_code,
+                    "item_code": item_code,
                     "item_name": item.item_name,
                     "indent": indent,
                     "bom_level": indent,
@@ -64,7 +66,7 @@ def get_exploded_items(data, bom, indent=0, qty=1):
             data.append(
                 {
                     "parent_bom": f"<b>{parent_bom}</b>",
-                    "item_code": item.item_code,
+                    "item_code": item_code,
                     "item_name": item.item_name,
                     "indent": indent,
                     "bom_level": indent,
