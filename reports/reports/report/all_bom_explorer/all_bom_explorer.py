@@ -19,7 +19,7 @@ def execute(filters=None):
 
 def get_data(data, filters):
 	if not filters.get("bom"):
-		boms = frappe.get_all("BOM", filters={"is_default": 1, "is_active": 1, "name": ["like", "%fa%"]},  fields=["name"])
+		boms = frappe.get_all("BOM", filters={"is_default": 1, "is_active": 1, "docstatus": 1, "name": ["like", "%fa%"]},  fields=["name"])
 		for bom in boms:
 			logger.info(f"BOM: {bom.name}")
 			get_exploded_items(data, bom.name)
@@ -63,7 +63,7 @@ def get_exploded_items(data, bom, indent=0, qty=1):
             )
 
         else:
-            sub_bom = frappe.get_value("BOM", filters={"name": item.bom_no, "is_default": 1, "is_active": 1})
+            sub_bom = frappe.get_value("BOM", filters={"name": item.bom_no, "is_default": 1, "is_active": 1, "docstatus": 1})
             if sub_bom:
                 data.append(
                     {
