@@ -31,7 +31,7 @@ def get_exploded_items(data, bom, indent=0, qty=1):
     exploded_items = frappe.get_all(
         "BOM Item",
         filters={"parent": bom},
-        fields=["qty", "bom_no", "item_code", "item_name", "description", "uom", "rate", "amount"],
+        fields=["qty", "bom_no", "item_code", "item_name", "description", "uom", "rate", "amount", "location", "make"],
         order_by="idx asc",
     )
 
@@ -59,6 +59,8 @@ def get_exploded_items(data, bom, indent=0, qty=1):
                     "rate": item.rate,
                     "amount": item.amount,
                     "description": item.description,
+                    "location": item.location,
+                    "make": item.make,
                 }
             )
 
@@ -78,6 +80,8 @@ def get_exploded_items(data, bom, indent=0, qty=1):
                         "rate": 0,
                         "amount": 0,
                         "description": item.description,
+                        "location": item.location,
+                        "make": item.make,
                     }
                 )
                 if item.bom_no:
@@ -112,4 +116,16 @@ def get_columns():
 			"fieldname": "description",
 			"width": 150,
 		},
+        {
+            "label": _("Location"),
+            "fieldtype": "data",
+            "fieldname": "location",
+            "width": 80,
+        },
+        {
+            "label": _("Make"),
+            "fieldtype": "data",
+            "fieldname": "make",
+            "width": 80,
+        }
 	]
