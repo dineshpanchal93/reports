@@ -1,0 +1,160 @@
+<style>
+	body {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+	}
+
+	.content {
+		flex: 1;
+		margin-bottom: 100px;
+		/* Adjust this value to leave enough space for the footer */
+	}
+
+	.footer {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 100px;
+		/* Adjust this value based on the footer's height */
+	}
+</style>
+
+<div class="content">
+	<div class="row">
+		<div class="col-xs-6">
+			<p style="font-size: 18px;">{%= __("To: ") %}<strong> {%= filters.account %} </strong> </p>
+			<p style="font-size: 15px;">{%= data[1].address %}</p>
+			<p style="font-size: 15px;"> {%= data[1].pan_no %}</p>
+		</div>
+		<div class="col-xs-6 text-right">
+			<p style="font-size: 18px;">{%= __("From: ") %}<strong>{%= __(" Blisstering Electronics Pvt Ltd") %}
+				</strong></p>
+			<p style="font-size: 15px;">{%= __("Plot No. 154. Toy City, Ecotech-III,") %}</p>
+			<p style="font-size: 15px;">{%= __("Greater Noida-201306 (U.P.)") %}</p>
+			<p style="font-size: 15px;">{%= __("CIN: U36109UP2016PTC083080") %}</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-6">
+			<h4 class="text-left">
+				{%= __("Dear Sir/Madam,") %}
+			</h4>
+		</div>
+		<div class="col-xs-6 text-right">
+			<h4 class="text-right">
+				<!-- leave some space after Date:  -->
+				{%= __("Date: ") %} {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}
+			</h4>
+		</div>
+	</div>
+
+	<h6 class="text-center">
+		{% if (filters.tax_id) { %}
+		{%= __("Tax Id: ")%} {%= filters.tax_id %}
+		{% } %}
+	</h6>
+
+	<h5 class="text-center">
+		<p style="font-size: 18px;"><strong>{%= __("Sub: Confirmation of Accounts") %}</strong></p>
+		<p style="font-size: 18px;">{%= frappe.datetime.str_to_user(filters.from_date) %}
+			{%= __("to") %}
+			{%= frappe.datetime.str_to_user(filters.to_date) %}
+		</p>
+	</h5>
+
+	<h5>
+		<p style="font-size: 15px; margin-top:20px;">
+			{%= __("Given below is the details of your Accounts as standing in my/out Books of Accounts for the above
+			mentioned period.") %}
+		</p>
+		<p></p>
+		<p style="margin-top: 20px; font-size: 15px;">
+			{%= __("Kindly return 3 copies stating your I.T. Permanent A/c No., duly signed and sealed, in confirmation
+			of the same.") %}
+			{%= __("Please note that if no replay is received from you within a fortnight, it will be assumed that you
+			have accepted the balance shown below.") %}
+		</p>
+	</h5>
+
+	<hr>
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th style="width: 15%">{%= __("Date") %}</th>
+				<th style="width: 20%">{%= __("Reference") %}</th>
+				<th style="width: 15%">{%= __("Remarks") %}</th>
+				<th style="width: 15%">{%= __("Debit") %}</th>
+				<th style="width: 15%">{%= __("Credit") %}</th>
+				<th style="width: 20%">{%= __("Balance (Dr - Cr)") %}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for(var i=0, l=data.length; i<l; i++) { %} <tr>
+				{% if(data[i].posting_date) { %}
+				<td>{%= frappe.datetime.str_to_user(data[i].posting_date) %}</td>
+				<td>{%= data[i].voucher_type %}
+					<br>{%= data[i].voucher_no %}
+				</td>
+				{% var longest_word = cstr(data[i].remarks).split(" ").reduce((longest, word) => word.length >
+				longest.length ? word : longest, ""); %}
+				<td {% if longest_word.length> 45 %} class="overflow-wrap-anywhere" {% endif %}>
+					<span>
+						{% if(!(filters.party || filters.account)) { %}
+						{%= data[i].party || data[i].account %}
+						<br>
+						{% } %}
+
+						<br>{%= __("Remarks") %}: {%= data[i].remarks %}
+						{% if(data[i].bill_no) { %}
+						<br>{%= __("Supplier Invoice No") %}: {%= data[i].bill_no %}
+						{% } %}
+					</span>
+				</td>
+				<td style="text-align: right">
+					{%= format_currency(data[i].debit, filters.presentation_currency, { precision: 2 }) %}
+				</td>
+				<td style="text-align: right">
+					{%= format_currency(data[i].credit, filters.presentation_currency, { precision: 2 }) %}
+				</td>
+				{% } else { %}
+				<td></td>
+				<td></td>
+				<td><b>{%= frappe.format(data[i].account, {fieldtype: "Link"}) || "&nbsp;" %}</b></td>
+				<td style="text-align: right">
+					{%= data[i].account && format_currency(data[i].debit, filters.presentation_currency ||
+					data[i].account_currency, { precision: 2 }) %}
+				</td>
+				<td style="text-align: right">
+					{%= data[i].account && format_currency(data[i].credit, filters.presentation_currency ||
+					data[i].account_currency, { precision: 2 }) %}
+				</td>
+				{% } %}
+				<td style="text-align: right">
+					{%= format_currency(data[i].balance, filters.presentation_currency || data[i].account_currency, {
+					precision: 2 }) %}
+				</td>
+				</tr>
+				{% } %}
+		</tbody>
+	</table>
+</div>
+
+<div class="footer" style="margin-bottom: 20px; margin-top: 30px;">
+	<br>
+	<div class="row">
+
+		<div class="col-xs-6">
+			<p style="margin-left: 50px; font-size: 15px;">
+				{%= __("I/We hereby confirm the above") %}
+			</p>
+		</div>
+		<div class="col-xs-6 text-right">
+			<p class="text-right" style="margin-right: 50px; font-size: 15px;">
+				{%= __("Yours faithfully,") %}
+			</p>
+		</div>
+	</div>
+</div>
